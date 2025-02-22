@@ -6,10 +6,11 @@ import androidx.compose.ui.Modifier
 @Composable
 internal actual fun MediaPlayer(
     modifier: Modifier?,
-    urlOrPathToFile: String,
+    urlOrUri: String,
     isLandscape: Boolean,
     stop: Boolean,
-    onMediaReadyToPlay: () -> Unit
+    onLoading: (isLoading:Boolean) -> Unit,
+    onError: (error:Throwable) -> Unit
 ) {
 
 }

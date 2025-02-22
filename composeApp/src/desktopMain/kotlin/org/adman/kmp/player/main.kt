@@ -8,6 +8,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Kmp-Player",
     ) {
-        App()
+        KmpShaPlayer(urlOrPathToFile = "")
     }
 }

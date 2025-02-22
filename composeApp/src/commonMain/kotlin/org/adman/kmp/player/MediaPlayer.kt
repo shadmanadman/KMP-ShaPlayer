@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 internal expect fun MediaPlayer(modifier: Modifier?= null,
-                                urlOrPathToFile: String,
+                                urlOrUri: String,
                                 isLandscape: Boolean = false,
                                 stop: Boolean = false,
-                                onMediaReadyToPlay: (() -> Unit) = {})
+                                onLoading: ((isLoading:Boolean) -> Unit) = {},
+                                onError: ((error:Throwable) -> Unit) = {})
