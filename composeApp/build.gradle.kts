@@ -14,7 +14,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -89,7 +88,6 @@ kotlin {
             implementation("org.openjfx:javafx-media:19:${fxSuffix}")
             implementation(libs.kotlinx.coroutines.swing)
         }
-
     }
 }
 
