@@ -1,15 +1,20 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     id("com.google.osdetector") version "1.7.3"
+    id("signing")
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 kotlin {
@@ -17,6 +22,7 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        publishLibraryVariants("release")
     }
 
     listOf(
@@ -96,11 +102,8 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "org.adman.kmp.player"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
     }
     packaging {
         resources {
@@ -132,4 +135,53 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+
+mavenPublishing {
+    coordinates(
+        groupId = libs.versions.groupId.get(),
+        artifactId = libs.versions.artifactId.get(),
+        version = libs.versions.libVersion.get()
+    )
+
+    pom {
+        name = "KMP ShaPlayer"
+        description = "A kmp player for all targets"
+        url = "https://github.com/shadmanadman/KMP-ShaPlayer"
+        licenses {
+            license {
+                name = "Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "shadmanadman"
+                name = "Shadman Adman"
+                email = "adman.shadman@gmail.com"
+            }
+        }
+        scm {
+            connection = "scm:git:https://github.com/shadmanadman/KMP-ShaPlayer"
+            developerConnection = "scm:git:git@github.com:shadmanadman/KMP-ShaPlayer.git"
+            url = "https://github.com/shadmanadman/KMP-ShaPlayer"
+        }
+    }
+
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+}
+
+val keystorePropertiesFile = rootProject.file("local.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+signing {
+    useInMemoryPgpKeys(
+        keystoreProperties["signing.keyId"].toString(),
+        File(keystoreProperties["signing.secretKeyFile"].toString()).readText(),
+        keystoreProperties["signing.password"].toString()
+    )
 }
